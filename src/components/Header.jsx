@@ -52,8 +52,6 @@ function Header() {
         <Navbar.Text className="text-white me-2 d-none d-lg-inline fs-5">
             Hola, {currentUser.nombre.split(' ')[0]}
         </Navbar.Text>
-
-                      {/* --- ENLACE NUEVO --- */}
                       <Button 
                           as={Link} 
                           to="/mis-compras" 
@@ -76,8 +74,6 @@ function Header() {
                 <Nav.Link as={Link} to="/registro">Registro</Nav.Link>
               </>
             )}
-
-            {/* Link de Carrito (al final) */}
             <Nav.Link as={Link} to="/carrito" className="carrito ms-3">
               Carrito
               <Badge 

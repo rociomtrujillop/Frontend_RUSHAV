@@ -4,16 +4,27 @@ import { Container, Row, Col, Card, Button, Spinner, Alert, Form } from 'react-b
 
 const API_URL_PRODUCTOS = 'http://localhost:8080/api/productos';
 const API_URL_CATEGORIAS = 'http://localhost:8080/api/categorias';
+const BASE_URL = 'http://localhost:8080';
 
 function formatearPrecio(valor) {
     const num = Number(valor);
     return isNaN(num) ? '$?' : num.toLocaleString("es-CL");
 }
 
+function getImageUrl(imgString) {
+    if (!imgString) return '/img/default.jpg';
+    const firstImg = imgString.split(',')[0].trim();
+    if (firstImg.startsWith('/api')) return `${BASE_URL}${firstImg}`;
+    return firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+}
+
 function agregarAlCarrito(producto) {
     if (!producto || typeof producto.id === 'undefined') return;
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     const existente = carrito.find(p => p.id === producto.id);
+    
+    const imagenCorrecta = getImageUrl(producto.imagenes);
+
     if (existente) {
         existente.cantidad = (existente.cantidad || 1) + 1;
     } else {
@@ -21,7 +32,7 @@ function agregarAlCarrito(producto) {
             id: producto.id,
             nombre: producto.nombre || 'Producto',
             precio: producto.precio,
-            imagen: `/${producto.imagenes ? producto.imagenes.split(',')[0].trim() : 'img/default.jpg'}`,
+            imagen: imagenCorrecta, 
             cantidad: 1
         };
         carrito.push(productoParaCarrito);
@@ -187,7 +198,12 @@ function Productos() {
                     <Col key={p.id} sm={6} md={4} lg={3} className="mb-4">
                         <Card className="h-100 producto-card"> 
                             <Link to={`/detalle?id=${p.id}`}>
-                                <Card.Img variant="top" src={`/${p.imagenes ? p.imagenes.split(',')[0].trim() : 'img/default.jpg'}`} alt={p.nombre} style={{cursor: 'pointer'}} />
+                                <Card.Img variant="top" 
+                                    src={getImageUrl(p.imagenes)}
+                                    alt={p.nombre} 
+                                    style={{cursor: 'pointer'}} 
+                                    onError={(e) => { e.target.src = '/img/default.jpg'; }}
+                                />
                             </Link>
                             <Card.Body> 
                                 <Card.Title>

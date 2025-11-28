@@ -4,15 +4,27 @@ import { Container, Row, Col, Card, Button, Spinner, Alert, Breadcrumb } from 'r
 
 const API_URL_PRODUCTOS = 'http://localhost:8080/api/productos';
 const PRECIO_MAXIMO_OFERTA = 17000;
+const BASE_URL = 'http://localhost:8080';
 
 function formatearPrecio(valor) {
     const num = Number(valor);
     return isNaN(num) ? '$?' : num.toLocaleString("es-CL");
 }
+
+function getImageUrl(imgString) {
+    if (!imgString) return '/img/default.jpg';
+    const firstImg = imgString.split(',')[0].trim();
+    if (firstImg.startsWith('/api')) return `${BASE_URL}${firstImg}`;
+    return firstImg.startsWith('/') ? firstImg : `/${firstImg}`;
+}
+
 function agregarAlCarrito(producto) {
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     if (!producto || typeof producto.id === 'undefined') return;
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     const existente = carrito.find(p => p.id === producto.id);
+    
+    const imagenCorrecta = getImageUrl(producto.imagenes);
+
     if (existente) {
         existente.cantidad = (existente.cantidad || 1) + 1;
     } else {
@@ -20,13 +32,15 @@ function agregarAlCarrito(producto) {
             id: producto.id,
             nombre: producto.nombre || 'Producto',
             precio: producto.precio,
-            imagen: `/${producto.imagenes ? producto.imagenes.split(',')[0].trim() : 'img/default.jpg'}`,
+            imagen: imagenCorrecta, 
             cantidad: 1
         };
         carrito.push(productoParaCarrito);
     }
     localStorage.setItem("carrito", JSON.stringify(carrito));
+    
     window.dispatchEvent(new Event('cartUpdated'));
+    
     alert("Producto añadido al carrito");
 }
 
@@ -60,7 +74,7 @@ function Ofertas() {
         };
         fetchProductos();
         return () => { isMounted = false; };
-    }, []); // Solo al montar
+    }, []);
 
     if (loading) {
         return <Container className="text-center p-5"><Spinner animation="border" variant="primary" /></Container>;
@@ -89,12 +103,12 @@ function Ofertas() {
                             <Link to={`/detalle?id=${p.id}`}>
                                 <Card.Img 
                                     variant="top" 
-                                    src={`/${p.imagenes ? p.imagenes.split(',')[0].trim() : 'img/default.jpg'}`} 
+                                    src={getImageUrl(p.imagenes)}
                                     alt={p.nombre || 'Producto'}
-                                    style={{ cursor: 'pointer' }}
+                                    style={{cursor: 'pointer'}} 
+                                    onError={(e) => { e.target.src = '/img/default.jpg'; }}
                                 />
                             </Link>
-
                             <Card.Body> 
                                 <Card.Title>
                                     <Link 
