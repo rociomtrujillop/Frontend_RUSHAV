@@ -48,10 +48,24 @@ function Header() {
             {isLoggedIn ? (
               <>
                 {currentUser && (
-                    <Navbar.Text className="text-white me-2 d-none d-lg-inline">
-                        Hola, {currentUser.nombre.split(' ')[0]}
-                    </Navbar.Text>
-                )}
+    <>
+        <Navbar.Text className="text-white me-2 d-none d-lg-inline fs-5">
+            Hola, {currentUser.nombre.split(' ')[0]}
+        </Navbar.Text>
+
+                      {/* --- ENLACE NUEVO --- */}
+                      <Button 
+                          as={Link} 
+                          to="/mis-compras" 
+                          variant="outline-light" 
+                          size="sm" 
+                          className="me-2"
+                      >
+                          Mis Compras
+                      </Button>
+                      {/* -------------------- */}
+                  </>
+              )}
                 <Button variant="outline-danger" size="sm" onClick={handleLogout} className="ms-lg-2">
                   Cerrar Sesión
                 </Button>

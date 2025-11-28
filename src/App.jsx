@@ -13,6 +13,7 @@ import Blogs from './pages/Blogs';
 import Nosotros from './pages/Nosotros';
 import Contacto from './pages/Contacto';
 import Ofertas from './pages/Ofertas'; 
+import HistorialCompras from './pages/HistorialCompras';
 
 import Checkout from './pages/Checkout';         
 import PagoExitoso from './pages/PagoExitoso';   
@@ -55,7 +56,8 @@ function App() {
           <Route path="blogs" element={<Blogs />} />
           <Route path="nosotros" element={<Nosotros />} />
           <Route path="contacto" element={<Contacto />} />
-          <Route path="ofertas" element={<Ofertas />} /> 
+          <Route path="ofertas" element={<Ofertas />} />
+          <Route path="mis-compras" element={<HistorialCompras />} />
 
           <Route path="checkout" element={<Checkout />} />
           <Route path="pago-exitoso" element={<PagoExitoso />} />
